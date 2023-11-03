@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: #1c1c1c;
+            font-family: Arial, sans-serif;
+        }
+
+        .container {
+            max-width: 1500px;
+            margin: 0 auto;
+            background-color: #1c1c1c;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-wrap: wrap;
+        }
+
+        .header {
+            background-color: #1c1c1c;
+            color: rgb(255, 255, 255);
+            padding: 20px;
+            text-align: center;
+            width: 100%;
+        }
+
+        .header h1 {
+            font-size: 36px;
+        }
+
+        .main {
+            width: 100%;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            padding: 20px;
+            margin-top: 50px;
+        }
+
+        .sidebar {
+            flex: 1;
+            max-width: 300px;
+            margin-right: 20px;
+        }
+
+        .sidebar img {
+            width: 100%;
+            height: auto;
+        }
+
+        .sidebar ul {
+            list-style: none;
+            margin-top: 20px;
+        }
+
+        .sidebar li {
+            margin-bottom: 10px;
+        }
+
+        .sidebar a {
+            display: inline-block;
+            background-color: #4287f5;
+            color: rgb(255, 253, 253);
+            text-decoration: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+        }
+
+        .sidebar a:hover {
+            background-color: #255ab5;
+        }
+
+        .content {
+            flex: 2;
+            min-width: 300px;
+        }
+
+        .content h2 {
+            font-size: 24px;
+            margin-bottom: 10px;
+            color: #ffffff;
+        }
+
+        .movie-details {
+            background-color: #1c1c1c;
+            padding: 20px;
+            margin-top: 20px;
+            border-radius: 10px;
+        }
+
+        .movie-details h3 {
+            font-size: 20px;
+            color: #ffffff;
+        }
+
+        .movie-details p {
+            margin-top: 15px;
+            color: #ffffff;
+            font-size: 14px;
+            text-align: justify;
+            line-height: 1.5;
+        }
+
+        .conocido-details {
+            border-radius: 10px;
+            position: relative;
+            left: 10px;
+
+        }
+
+        .conocido-details h3 {
+            font-size: 20px;
+            color: #ffffff;
+        }
+
+        .conocido-details p {
+            color: #ffffff;
+        }
+
+        .movie-list {
+            display: flex;
+            list-style: none;
+            padding: 0;
+            overflow-x: auto;
+            flex-wrap: nowrap;
+        }
+
+        .movie-item {
+            margin-top: 10px;
+            margin-right: 10px;
+        }
+
+
+        .info-personal {
+            color: white;
+        }
+
+        #actor-personal-info li {
+            margin-top: 20px;
+        }
+
+        .participo-en {
+            color: white;
+            position: relative;
+            left: 20px;
+            top: 100px;
+        }
+
+
+
+        @media (max-width: 768px) {
+            .main {
+                flex-direction: column;
+            }
+
+            .sidebar,
+            .content {
+                width: 100%;
+                margin-right: 0;
+            }
+
+        }
+
+        .banner {
+            z-index: 1;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background-color: #333;
+            color: #fff;
+            padding: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            width: 100px;
+            height: auto;
+            margin-right: 40px;
+        }
+
+        .botones {
+            display: flex;
+        }
+
+        .boton {
+    padding: 10px 20px;
+    background-color: #007BFF;
+    color: #fff;
+    text-decoration: none;
+    margin-right: 30px;
+    border: none;
+    border-radius: 50px;
+    }
+
+    .botonOut{
+        padding: 10px 20px;
+        background-color: #dc3545;
+        color: #fff;
+        text-decoration: none;
+        margin-right: 30px;
+        border: none;
+        border-radius: 50px;
+    }
+
+    .boton:hover {
+        background-color: #2b0670;
+    }
+
+    .botonOut:hover {
+        background-color: #ca2536;
+    }
+
+        @media (max-width: 768px) {
+            .banner {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .logo {
+                margin: 0;
+            }
+
+            .botones {
+                margin-top: 10px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="banner" id="appOut">
+        <a href="movies.html">
+          <img class="logo" src="images/cinepolis.png" alt="Mi Logo">
+        </a>
+        <div class="botones">
+          <a href="movies.html" class="boton">Inicio</a>
+          <a href="movies.html" class="boton">Películas</a>
+          <a href="series.html" class="boton">Series de TV</a>
+          <a href="trending.html" class="boton">Las mas populares</a>
+          <a href="#"  @click="logout" class="botonOut">Cerrar Sesión</a>
+        </div>
+      </div>
+
+    <div id="app">
+            <div class="main">
+                <div class="sidebar">
+                    <img :src="actorImage" alt="Foto del actor">
+                    <ul id="actor-links">
+                        <li v-if="actorHomepage"><a :href="actorHomepage" target="_blank">Sitio web oficial</a></li>
+                    </ul>
+                    <div class="info-personal">
+                        <h3>Información Personal</h3>
+                        <ul id="actor-personal-info">
+                            <li v-if="actorBirthday"><strong>Fecha de Nacimiento</strong><br>{{ actorBirthday }}</li>
+                            <li v-if="actorPlaceOfBirth"><strong>Lugar de Nacimiento</strong><br> {{ actorPlaceOfBirth
+                                }}
+                            </li>
+                            <li><strong>Género</strong><br> {{ actorGender }}</li>
+                            <li><strong>Conocido por</strong><br> {{ actorKnownFor }}</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="content">
+                    <h2 id="actor-name-details">{{ actorName }}</h2>
+                    <div class="movie-details">
+                        <h3>Biografía</h3>
+                        <p id="actor-biography">{{ actorBiography }}</p>
+                    </div>
+                    <div class="conocido-details">
+                        <h3 id="conocido-list">Conocido por</h3>
+                        <div class="known-for-movies" style="overflow-x: auto;">
+                            <ul class="movie-list"
+                                style="display: flex; list-style: none; overflow: auto; width: 100%;">
+                                <li v-for="movie in actorKnownForMovies" :key="movie.id" class="movie-item"
+                                    style="margin-right: 10px;">
+                                    <a v-bind:href="'movie.html?id=' + movie.id">
+                                        <img v-bind:src="'https://image.tmdb.org/t/p/w200' + movie.poster_path"
+                                            alt="Poster" style="max-width: 100px;" />
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+    <script>
+        new Vue({
+            el: '#app',
+            data: {
+                apiKey: '5dfbc9e67866377d506f619d965a17ff',
+                personId: '',
+                actorName: '',
+                actorImage: '',
+                actorHomepage: '',
+                actorBirthday: '',
+                actorPlaceOfBirth: '',
+                actorGender: '',
+                actorKnownFor: '',
+                actorKnownForMovies: [],
+                movieListWidth: '100%',
+                actorBiography: ''
+            },
+            created() {
+                //personId
+                const urlMovie = window.location.href;
+                const lastParamMovie = urlMovie.split("/detailsPeople.html?id=").slice(-1)[0];
+                this.personId = lastParamMovie;
+
+                this.fetchActorDetails();
+            },
+
+            mounted() {
+                if (localStorage.getItem('logged') === null) {
+                    window.location.href = "index.html"
+                }
+            },
+
+            methods: {
+                fetchActorDetails() {
+                    const url = `https://api.themoviedb.org/3/person/${this.personId}?api_key=${this.apiKey}&language=es-ES`;
+                    fetch(url)
+                        .then(response => response.json())
+                        .then(data => {
+                            this.actorName = data.name;
+                            this.actorImage = data.profile_path ? `https://image.tmdb.org/t/p/w300${data.profile_path}` : '';
+                            this.actorHomepage = data.homepage;
+                            this.actorBirthday = data.birthday;
+                            this.actorPlaceOfBirth = data.place_of_birth;
+                            this.actorGender = data.gender === 2 ? 'Masculino' : 'Femenino';
+                            this.actorKnownFor = data.known_for_department;
+                            this.actorBiography = data.biography;
+                            this.fetchActorKnownForMovies(data.known_for);
+                        })
+                        .catch(error => console.error('Error al obtener los detalles del actor:', error));
+                },
+                fetchActorKnownForMovies(knownFor) {
+                    // Solicitud de peliculas
+                    const url = `https://api.themoviedb.org/3/person/${this.personId}/movie_credits?api_key=${this.apiKey}&language=es-ES`;
+                    fetch(url)
+                        .then(response => response.json())
+                        .then(data => {
+                            this.actorKnownForMovies = data.cast.slice(0, 10); // Limita a 10 películas 
+                        })
+                        .catch(error => console.error('Error al obtener las películas conocidas del actor:', error));
+                }
+            }
+        });
+    </script>
+    <script src="js/out.js"></script>
+</body>
+
+</html>

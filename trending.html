@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Películas y Series Populares</title>
+</head>
+
+<style>
+  body {
+    background-color: #1c1c1c;
+  }
+
+  .custom-select {
+    background-color: #333;
+    border: 1px solid #555;
+    padding: 5px;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 50px;
+  }
+
+  ul.movie-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  li.movie-item {
+    margin: 0;
+    padding: 0;
+  }
+
+  .banner {
+    z-index: 1;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background-color: #333;
+    color: #fff;
+    padding: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .logo {
+    width: 100px;
+    height: auto;
+    margin-right: 40px;
+  }
+
+  .botones {
+    display: flex;
+  }
+
+  .boton {
+    padding: 10px 20px;
+    background-color: #007BFF;
+    color: #fff;
+    text-decoration: none;
+    margin-right: 30px;
+    border: none;
+    border-radius: 50px;
+}
+
+.botonOut{
+    padding: 10px 20px;
+    background-color: #dc3545;
+    color: #fff;
+    text-decoration: none;
+    margin-right: 30px;
+    border: none;
+    border-radius: 50px;
+}
+
+.boton:hover {
+    background-color: #2b0670;
+}
+
+.botonOut:hover {
+    background-color: #ca2536;
+}
+</style>
+
+<body>
+  <div class="banner" id="appOut">
+    <a href="movies.html">
+      <img class="logo" src="images/cinepolis.png" alt="Mi Logo">
+    </a>
+    <div class="botones">
+      <a href="movies.html" class="boton">Inicio</a>
+      <a href="movies.html" class="boton">Películas</a>
+      <a href="series.html" class="boton">Series de TV</a>
+      <a href="trending.html" class="boton">Las mas populares</a>
+      <a href="#"  @click="logout" class="botonOut">Cerrar Sesión</a>
+    </div>
+  </div>
+
+  <div id="app" style="background-color: #1c1c1c; padding: 20px;">
+    <div style="text-align: center; margin: 10px;">
+      <label for="mediaType" style="color: white;">Tipo:</label>
+      <select id="mediaType" v-model="selectedMediaType" class="custom-select">
+        <option value="movie">Películas</option>
+        <option value="tv">Series</option>
+      </select>
+      <label for="popularity" style="color: white; margin-left: 20px;">Popularidad:</label>
+      <select id="popularity" v-model="selectedPopularity" class="custom-select">
+        <option value="popularity.desc">Más Populares</option>
+        <option value="popularity.asc">Menos Populares</option>
+      </select>
+    </div>
+
+    <div>
+      <ul class="movie-list" style="display: flex; flex-wrap: wrap; justify-content: center;">
+        <li v-for="item in items" :key="item.id" class="movie-item"
+          style="margin: 10px; text-align: center; flex-basis: calc(25% - 20px);">
+          <a :href="'movie.html?id=' + item.id">
+            <img :src="'https://image.tmdb.org/t/p/w200/' + item.poster_path" alt="Poster"
+              style="max-width: 100%; max-height: 300px;" />
+            <p style="color: white;">{{ item.title || item.name }}</p>
+          </a>
+        </li>
+      </ul>
+    </div>
+
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14"></script>
+  <script>
+    new Vue({
+      el: '#app',
+      data: {
+        selectedMediaType: 'movie',
+        selectedPopularity: 'popularity.desc',
+        items: [],
+        apiKey: "5dfbc9e67866377d506f619d965a17ff"
+      },
+      methods: {
+        fetchData() {
+          const url = `https://api.themoviedb.org/3/discover/${this.selectedMediaType}?sort_by=${this.selectedPopularity}&api_key=${this.apiKey}`;
+          fetch(url)
+            .then(response => response.json())
+            .then(data => {
+              this.items = data.results;
+            })
+            .catch(error => {
+              console.error('Error:', error);
+              this.items = [];
+            });
+        }
+      },
+      watch: {
+        selectedMediaType: 'fetchData',
+        selectedPopularity: 'fetchData'
+      },
+      mounted() {
+
+        if (localStorage.getItem('logged') === null) {
+          window.location.href = "index.html"
+        }
+        
+        this.fetchData();
+      }
+    });
+  </script>
+  <script src="js/out.js"></script>
+</body>
+
+</html>

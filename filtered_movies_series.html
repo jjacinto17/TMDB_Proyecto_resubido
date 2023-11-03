@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Episodios de temporada</title>
+    <link rel="stylesheet" type="text/css" href="css/styles_filtered.css">
+</head>
+
+<body>
+    <div class="banner" id="appOut">
+        <a href="movies.html">
+          <img class="logo" src="images/cinepolis.png" alt="Mi Logo">
+        </a>
+        <div class="botones">
+          <a href="movies.html" class="boton">Inicio</a>
+          <a href="movies.html" class="boton">Películas</a>
+          <a href="series.html" class="boton">Series de TV</a>
+          <a href="trending.html" class="boton">Las mas populares</a>
+          <a href="#"  @click="logout" class="botonOut">Cerrar Sesión</a>
+        </div>
+      </div>
+    <div id="app">
+        <div class="main">
+            <div class="banner2">
+                <h1>{{ palabraClaveNombre }}</h1>
+                <div class="ordenar">
+                    <div class="dropdown">
+                        <button class="dropbtn">Ordenar por:</button>
+                        <div class="dropdown-content">
+                            <a @click="ordenarPorTipo('tv')">Series de TV</a>
+                            <a @click="ordenarPorTipo('movie')">Películas</a>
+                            <a @click="ordenarAscendente">Ascendente</a>
+                            <a @click="ordenarDescendente">Descendente</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="cards">
+                <div v-for="item in items" class="cards_item">
+                    <div  v-if="inicio === 'tv'" class="card">
+                        <div class="card_content">
+                            <a v-bind:href="'tv.html?id='+item.id"><img class="card_image" :src="'https://image.tmdb.org/t/p/w300' + item.poster_path"
+                                @click="mostrarMensaje(item.id)"></a>
+                            <div class="card_details">
+                                <a style="text-decoration: none; color: #fff;" v-bind:href="'tv.html?id='+item.id"><h2 class="card_title" @click="mostrarMensaje(item.id)">{{ item.title || item.name }}</a>
+                                </h2>
+                                <p class="card_text">{{ item.overview }}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div  v-else class="card">
+                        <div class="card_content">
+                            <a v-bind:href="'movie.html?id='+item.id"><img class="card_image" :src="'https://image.tmdb.org/t/p/w300' + item.poster_path"
+                                @click="mostrarMensaje(item.id)"></a>
+                            <div class="card_details">
+                                <a style="text-decoration: none; color: #fff;" v-bind:href="'movie.html?id='+item.id"><h2 class="card_title" @click="mostrarMensaje(item.id)">{{ item.title || item.name }}</a>
+                                </h2>
+                                <p class="card_text">{{ item.overview }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <button @click="mostrarMas" class="mostrar-mas-button">Mostrar más</button>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+    <script>
+        //const urlParams = new URLSearchParams(window.location.search);
+        //const id_palabraClave = urlParams.get('id_PalabraClave');
+        new Vue({
+            el: '#app',
+            data: {
+                items: [],
+                palabraClaveNombre: '',
+                inicio: 'tv',
+                palabraClave: '',
+                paginaActual: 1, // Página actual
+                elementosPorPagina: 10 // Cantidad de elementos por página
+            },
+            methods: {
+                reiniciarResultados() {
+                    this.items = []; // Limpiar la lista de resultados
+                    this.paginaActual = 1; // Reiniciar la página a la primera
+                },
+                buscarNombrePalabraClave(palabraClave) {
+                    const myHeaders = new Headers();
+                    myHeaders.append("Authorization", "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI2NTQzMDQ0MTMxNTkyYzIzODExZjQxOGNmYzJlMjMxNyIsInN1YiI6IjY1MTRiOTA0Y2FkYjZiMDJjMDUxN2U4OSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.OCGB4IYL_Y-9abC7XTgCqzYrCT5hSm7gVQi-4WMiF00");
+
+                    const requestOptions = {
+                        method: 'GET',
+                        headers: myHeaders,
+                        redirect: 'follow'
+                    };
+
+                    fetch(`https://api.themoviedb.org/3/keyword/${this.palabraClave}`, requestOptions)
+                        .then(response => response.json())
+                        .then(data => {
+                            this.palabraClaveNombre = data.name;
+                            this.buscarSeriesPorPalabraClave(palabraClave);
+                        })
+                        .catch(error => {
+                            console.error('Error al buscar el nombre de la palabra clave:', error);
+                        });
+                },
+                buscarSeriesPorPalabraClave(palabraClave, inicio) {
+                    const myHeaders = new Headers();
+                    myHeaders.append("Authorization", "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI2NTQzMDQ0MTMxNTkyYzIzODExZjQxOGNmYzJlMjMxNyIsInN1YiI6IjY1MTRiOTA0Y2FkYjZiMDJjMDUxN2U4OSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.OCGB4IYL_Y-9abC7XTgCqzYrCT5hSm7gVQi-4WMiF00");
+
+                    const requestOptions = {
+                        method: 'GET',
+                        headers: myHeaders,
+                        redirect: 'follow'
+                    };
+                    const page = this.paginaActual; // Página actual
+                    const perPage = this.elementosPorPagina; // Cantidad de elementos por página
+                    fetch(`https://api.themoviedb.org/3/discover/${this.inicio}?include_adult=false&include_null_first_air_dates=false&language=es-ES&page=${page}&sort_by=popularity.desc&with_keywords=${this.palabraClave}&per_page=${perPage}`, requestOptions)
+                        .then(response => response.json())
+                        .then(data => {
+                            this.items = this.items.concat(data.results.map(item => {
+                                if (item.overview) {
+                                    return item;
+                                }
+                                return {
+                                    ...item,
+                                    overview: 'No hay descripción disponible.'
+                                };
+                            }));
+                        })
+                        .catch(error => {
+                            console.error('Error al buscar series por palabra clave:', error);
+                        });
+                },
+                ordenarPorTipo(tipo) {
+                    if (tipo === 'movie') {
+                        this.inicio = 'movie';
+                    } else if (tipo === 'tv') {
+                        this.inicio = 'tv';
+                    }
+                    this.reiniciarResultados();
+                    this.buscarSeriesPorPalabraClave(this.palabraClave);
+                },
+                ordenarAscendente() {
+                    this.items.sort((a, b) => a.popularity - b.popularity);
+                },
+
+                ordenarDescendente() {
+                    this.items.sort((a, b) => b.popularity - a.popularity);
+                },
+                mostrarMensaje(id, tipo) {
+                    console.log("ID de la serie o película:", id, "El tipo es: ", this.inicio);
+                    // window.location.href = `detalles.html?id=${id}&tipo=${this.inicio}`;
+                },
+                mostrarMas() {
+                    this.paginaActual++; // Aumenta el número de página
+                    this.buscarSeriesPorPalabraClave(this.palabraClave);
+                }
+            },
+            created() {
+                this.buscarNombrePalabraClave(this.palabraClave);
+            },
+            mounted(){
+                if (localStorage.getItem('logged') === null) {
+                    window.location.href = "index.html"
+                }
+
+                const urlMovie = window.location.href;
+                const lastParamMovie = urlMovie.split("/filtered_movies_series.html?id=").slice(-1)[0];
+                this.palabraClave = lastParamMovie;
+            }
+        });
+    </script>
+     <script src="js/out.js"></script>
+</body>
+
+</html>

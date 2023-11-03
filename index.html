@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+
+    <style>
+        body{
+            background-image: url('images/bgCine.png');
+            background-size: cover;
+            background-repeat: no-repeat;
+        }
+    </style>
+</head>
+
+<body>
+        <div class="container-fluid" id="container_app">
+            <div class="row justify-content-center align-items-center" style="min-height: 100vh;">
+                    <div class="col-md-4">
+                        <div class="form bg-light p-5">
+
+                            <div class="row d-flex mb-4 justify-content-center align-items-center">
+                                <img class="col-md-6" src="images/cinepolis.png">
+                                <h3 class="col-md-6 text-center text-dark">Log-In</h3>
+                            </div>
+                            
+                            <div class="form-group mb-4">
+                                <label class="text-dark">Nombre de Usuario:</label><br>
+                                <input type="text" v-model="username" class="form-control">
+                            </div>
+
+                            <div class="form-group mb-4">
+                                <label class="text-dark">Contraseña:</label><br>
+                                <input type="password" v-model="password" class="form-control">
+                            </div>
+                            
+                            <div class="form-group d-grid gap-2 pt-3">
+                                <button @click="login" class="btn btn-dark">Acceder</Button>
+                            </div>
+                        </div>
+                    </div>
+            </div>
+        </div>
+
+        <!-- Sweet alert -->
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <!-- VUE CDN -->
+        <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+        <!-- VUE script -->
+        <script>
+            const { createApp, ref } = Vue
+    
+                createApp({
+                    setup() {
+                        return {
+                            password: ref(''),
+                            username: ref(''),
+                            logged: ref(localStorage.getItem('logged'))
+                        }
+                    },
+                    
+                    methods: {
+                        login() {
+                            var myHeaders = new Headers();
+                            myHeaders.append("Content-Type", "application/json");
+                            myHeaders.append("Authorization", "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJkN2Q0ZjlkNDNmOTEyOTUyZTVjYjQ5MTM4MjhiMzJlYiIsInN1YiI6IjY1MTRiODYxYmRkNTY4MDEzZjU4MzBlNyIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.ugQlk93CxiFB9aGcRo0TInf0Z3nGHUtXBuHJXFwKPxo");
+
+                            var raw = JSON.stringify({
+                            "username": this.username,
+                            "password": this.password,
+                            "request_token": ""
+                            });
+
+                            var requestOptions = {
+                            method: 'POST',
+                            headers: myHeaders,
+                            body: raw,
+                            redirect: 'follow'
+                            };
+
+                            fetch("https://api.themoviedb.org/3/authentication/token/validate_with_login", requestOptions)
+                            .then(response => response.json())
+                            .then(result =>  {
+                                if(result.success === true){
+                                    localStorage.setItem('logged', true);
+                                    window.location.href = "movies.html";
+
+                                }else{
+                                    this.username = '';
+                                    this.password = '';
+
+                                    Swal.fire({
+                                        icon: 'error',
+                                        title: 'Algo salió mal...',
+                                        text: 'Verifica que tu usuario y contraseña sean correctos.'
+                                    })
+                                }
+                            })
+                            .catch(error => console.log('error', error));
+                        }
+                    }
+
+                }).mount('#container_app')
+        </script>
+</body>
+</html>
